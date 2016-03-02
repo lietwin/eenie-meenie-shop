@@ -1,0 +1,21 @@
+{
+  "name": "meanote",
+  "version": "1.0.0",
+  "description": "Basic ecommerce app with the Mean stack",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test.js",
+    "test-kitten": "mocha -R nyan test.js"
+  },
+  "keywords": [
+    "MEAN"
+  ],
+  "author": "Lietwin <Ludi Akue>",
+  "license": "ISC",
+  "dependencies": {
+    "gulp": "3.9.1",
+    "mocha": "2.4.5",
+    "mongodb": "2.1.7",
+    "underscore": "1.8.3"
+  }
+}
