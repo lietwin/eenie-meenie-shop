@@ -48,6 +48,14 @@ mongodb.MongoClient.connect(uri, (error, db) => {
           _.each(docs, (doc) => {
             console.log(JSON.stringify(doc));
           });
+
+        // With sort by order
+        db.collection("movie").find(query).sort({"title":1}).toArray((error, docs) => {
+          checkErr(error);
+          console.log("Found docs? ");
+          _.each(docs, (doc) => {
+            console.log(JSON.stringify(doc));
+          });
           process.exit(0);
         // });
 

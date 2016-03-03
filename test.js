@@ -1,7 +1,7 @@
 const assert = require("assert");
 describe("my feature", () =>{
   it("works", () => {
-    assert.equal("A", "A");
+    assert.equal("A", "B");
   });
 
   it("fails gracefully", ()=>{
