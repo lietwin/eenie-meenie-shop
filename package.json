@@ -1,18 +1,24 @@
 {
-  "name": "meanote",
+  "name": "eenie-meenie-shop",
   "version": "1.0.0",
   "description": "Basic ecommerce app with the Mean stack",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lietwin/eenie-meenie-shop.git"
+  },
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "gulp test",
     "watch": "gulp watch"
   },
   "keywords": [
-    "MEAN"
+    "MEAN stack", "e-shop", "nodejs", "mongodb"
   ],
-  "author": "Lietwin <Ludi Akue>",
+  "author": "Lietwin (Ludi Akue) <ludi@a-r.io>",
   "license": "ISC",
   "dependencies": {
+    "express": "4.13.4",
     "mongodb": "2.1.7",
     "mongoose": "4.4.6",
     "underscore": "1.8.3"
