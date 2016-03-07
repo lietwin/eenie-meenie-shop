@@ -3,7 +3,7 @@ const mocha = require("gulp-mocha");
 
 // test task
 gulp.task("test", () => {
-  gulp.src("./test.js")
+  gulp.src("./test/test.js")
     .pipe(mocha())
     .on("error", function(error){
       //console.log(error);
