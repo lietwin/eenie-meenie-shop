@@ -13,7 +13,10 @@
     "watch": "gulp watch"
   },
   "keywords": [
-    "MEAN stack", "e-shop", "nodejs", "mongodb"
+    "MEAN stack",
+    "e-shop",
+    "nodejs",
+    "mongodb"
   ],
   "author": "Lietwin (Ludi Akue) <ludi@a-r.io>",
   "license": "ISC",
@@ -21,11 +24,16 @@
     "express": "4.13.4",
     "mongodb": "2.1.7",
     "mongoose": "4.4.6",
-    "underscore": "1.8.3"
+    "underscore": "1.8.3",
+    "wagner-core": "0.2.0"
   },
   "devDependencies": {
+    "babel-preset-es2015": "6.6.0",
     "gulp": "3.9.1",
+    "gulp-babel": "6.1.2",
+    "gulp-jscs": "3.0.2",
     "gulp-mocha": "^2.2.0",
+    "jscs": "2.11.0",
     "mocha": "^2.4.5"
   }
 }
