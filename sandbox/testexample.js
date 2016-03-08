@@ -1,18 +1,18 @@
-const assert = require("assert");
-describe("my feature", () =>{
-  it("works", () => {
-    assert.equal("A", "B");
+const assert = require('assert');
+describe('my feature', () =>{
+  it('works', () => {
+    assert.equal('A', 'B');
   });
 
-  it("fails gracefully", ()=>{
+  it('fails gracefully', ()=>{
     assert.throws(()=>{
-      throw "Error";
+      throw 'Error';
     });
   });
 });
 
-describe("my other feature", () => {
-  it("async", ()=>{
+describe('my other feature', () => {
+  it('async', ()=>{
     setTimeout(()=>{
       done();
     }, 25);

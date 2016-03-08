@@ -1,6 +1,6 @@
-const utils = require("../utils/utils");
-const mongoose = require("mongoose");
-const Cat = require("./cat.js");
+const utils = require('../utils/utils');
+const mongoose = require('mongoose');
+const Cat = require('./cat.js');
 
 
 
@@ -13,7 +13,7 @@ const refSchema = {
     src: {type: String},
     alt: {type: String} //default is project title
   }],
-  cat: { type: String, ref: "Cat" }
+  cat: { type: String, ref: 'Cat' }
 };
 
 //, authors:[{
@@ -28,7 +28,7 @@ const refSchema = {
 //     validator: function(v) {
 //       return authors.length == 1 ? v == false : v == true;
 //     },
-//     message: "authors are more than one, isTeam should be ticked"
+//     message: 'authors are more than one, isTeam should be ticked'
 //   }
 // }
 
