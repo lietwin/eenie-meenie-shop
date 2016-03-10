@@ -3,3 +3,4 @@ MongoSetup.md
 data/
 mongodb/
 .DS_Store
+./sandbox/populatedb.js
