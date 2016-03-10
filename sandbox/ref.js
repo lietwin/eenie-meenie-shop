@@ -2,16 +2,15 @@ const utils = require('../utils/utils');
 const mongoose = require('mongoose');
 const Cat = require('./cat.js');
 
-
-
 // TODO(lietwin): add supported image extension and their validation
 // TODO(lietwin) Alt by default should be the project title, fix this in pre.save()
 // TODO(lietwin) limit the size of images
+
 const refSchema = {
-  title: {type: String, required: true},
+  title: { type: String, required: true },
   imgs: [{
-    src: {type: String},
-    alt: {type: String} //default is project title
+    src: { type: String },
+    alt: { type: String } //default is project title
   }],
   cat: { type: String, ref: 'Cat' }
 };

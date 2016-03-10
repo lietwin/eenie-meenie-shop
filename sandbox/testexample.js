@@ -1,19 +1,19 @@
 const assert = require('assert');
-describe('my feature', () =>{
+describe('my feature', () => {
   it('works', () => {
     assert.equal('A', 'B');
   });
 
-  it('fails gracefully', ()=>{
-    assert.throws(()=>{
+  it('fails gracefully', ()=> {
+    assert.throws(()=> {
       throw 'Error';
     });
   });
 });
 
 describe('my other feature', () => {
-  it('async', ()=>{
-    setTimeout(()=>{
+  it('async', ()=> {
+    setTimeout(()=> {
       done();
     }, 25);
   });
