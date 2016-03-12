@@ -1,142 +1,165 @@
-const assert = require('assert');
-const superagent = require('superagent');
-const wagner = require('wagner-core');
-const express = require('express');
+var assert = require('assert');
+var express = require('express');
+var status = require('http-status');
+var superagent = require('superagent');
+var wagner = require('wagner-core');
 
-const URL_ROOT = 'http://localhost:3000';
+var URL_ROOT = 'http://localhost:3000';
+var PRODUCT_ID = '000000000000000000000001';
 
-//FIXME(lietwin) Make es6 compliance with babel transpiling
-
-//Category API
-describe('Shop Testing Module', () => {
+describe('User API', function() {
   var server;
   var Category;
   var Product;
+  var User;
 
-  before(() => {
-    // Bootstrapping server
+  before(function() {
     var app = express();
 
-    var models = require('../models')(wagner);
+    // Bootstrap server
+    models = require('../models')(wagner);
+
+    // Make models available in tests
+    Category = models.Category;
+    Product = models.Product;
+    User = models.User;
+
+    app.use(function(req, res, next) {
+      User.findOne({}, function(error, user) {
+        assert.ifError(error);
+        req.user = user;
+        next();
+      });
+    });
 
     app.use(require('../api')(wagner));
 
-    console.log('Starting the server ...');
     server = app.listen(3000);
-
-    // Make Category, Product models available
-    Category = models.Category;
-    Product = models.Product;
   });
 
-  // Stopping the server
-  after(() => {
-    console.log('Stopping the server ...');
+  after(function() {
+    // Shut the server down when we're done
     server.close();
   });
 
-  // Make sure Category empty before each testing
-  beforeEach((done) => {
-    Category.remove({}, (error) => {
+  beforeEach(function(done) {
+    // Make sure categories are empty before each test
+    Category.remove({}, function(error) {
       assert.ifError(error);
-      Product.remove({}, (error) => {
+      Product.remove({}, function(error) {
         assert.ifError(error);
-        done();
-      });
-    });
-  });
-
-  it('Can load category by id', (done) => {
-    // Create a category
-    Category.create({ _id: 'Electronics' }, (error, category) => {
-      assert.ifError();
-
-      // Make an http request to localhost:3000/category/Electronics
-      const url = URL_ROOT + '/category/id/Electronics';
-      superagent.get(url, (error, res) => {
-        assert.ifError(error);
-        var result;
-        assert.doesNotThrow(() => {
-          result = JSON.parse(res.text);
+        User.remove({}, function(error) {
+          assert.ifError(error);
+          done();
         });
-        assert.ok(result.category);
-        assert.equal(result.category._id, 'Electronics');
-        done();
       });
     });
   });
 
-  it('Can load all categories that have a certain parent', (done) => {
-    const ctgs = [
+  beforeEach(function(done) {
+    var categories = [
       { _id: 'Electronics' },
-      { _id: 'Phones', parent: 'Electronics', ancestors: ['Electronics'] },
-      { _id: 'Laptops', parent: 'Electronics', ancestors: ['Electronics'] },
-      { _id: 'Books' }
+      { _id: 'Phones', parent: 'Electronics' },
+      { _id: 'Laptops', parent: 'Electronics' },
+      { _id: 'Bacon' }
     ];
 
-    //Create categories
-    Category.create(ctgs, (error, categories) => {
-      assert.ifError(error);
+    var products = [
+      {
+        name: 'LG G4',
+        category: { _id: 'Phones', ancestors: ['Electronics', 'Phones'] },
+        price: {
+          amount: 300,
+          currency: 'USD'
+        }
+      },
+      {
+        _id: PRODUCT_ID,
+        name: 'Asus Zenbook Prime',
+        category: { _id: 'Laptops', ancestors: ['Electronics', 'Laptops'] },
+        price: {
+          amount: 2000,
+          currency: 'USD'
+        }
+      },
+      {
+        name: 'Flying Pigs Farm Pasture Raised Pork Bacon',
+        category: { _id: 'Bacon', ancestors: ['Bacon'] },
+        price: {
+          amount: 20,
+          currency: 'USD'
+        }
+      }
+    ];
 
-      // Make an http request to localhost:3000/category/parent/electronics
-      const url = URL_ROOT + '/category/parent/Electronics';
-      superagent.get(url, (error, res) => {
-        // Check error
+    var users = [{
+      profile: {
+        username: 'vkarpov15',
+        picture: 'http://pbs.twimg.com/profile_images/550304223036854272/Wwmwuh2t.png'
+      },
+      data: {
+        oauth: 'invalid',
+        cart: []
+      }
+    }];
+
+    Category.create(categories, function(error) {
+      assert.ifError(error);
+      Product.create(products, function(error) {
         assert.ifError(error);
-        var result;
-
-        //Check parsing does not throw exception
-        assert.doesNotThrow(() => {
-          result = JSON.parse(res.text);
+        User.create(users, function(error) {
+          assert.ifError(error);
+          done();
         });
-
-        // Check result contains categories
-        assert.ok(result.categories);
-
-        // Check result.categories has at least one element which parent is Electronics
-        //assert.equal(result.categories.length, 2);
-
-        //Check one of the returned categories' parent is Electronics
-        // es6   const [oneCat, ...others] = result.categories;
-        const oneCat = result.categories[0];
-        assert.equal(oneCat.parent, 'Electronics');
-        done();
       });
     });
   });
 
-  it('Can load product by id', (done) => {
-    //const PRODUCT_ID = '1234567890';
-    const item = {
-      name: 'iPhone 4',
-      pictures: ['http://i.ebayimg.com/images/i/371222340321-0-1/s-l1000.jpg'],
-      price: { amount: 8, currency: 'EUR' },
-      category: { _id: 'Phones', parent: 'Electronics', ancestors: ['Electronics'] }
-    };
-    Product.create(item, (error, product) => {
+  it('can save users cart', function(done) {
+    var url = URL_ROOT + '/me/cart';
+    superagent.
+      put(url).
+      send({
+        data: {
+          cart: [{ product: PRODUCT_ID, quantity: 1 }]
+        }
+      }).
+      end(function(error, res) {
+        assert.ifError(error);
+        assert.equal(res.status, status.OK);
+        User.findOne({}, function(error, user) {
+          assert.ifError(error);
+          assert.equal(user.data.cart.length, 1);
+          assert.equal(user.data.cart[0].product, PRODUCT_ID);
+          assert.equal(user.data.cart[0].quantity, 1);
+          done();
+        });
+      });
+  });
+
+  it('can load users cart', function(done) {
+    var url = URL_ROOT + '/me';
+
+    User.findOne({}, function(error, user) {
       assert.ifError(error);
+      user.data.cart = [{ product: PRODUCT_ID, quantity: 1 }];
+      user.save(function(error) {
+        assert.ifError(error);
 
-      // Send an http request to localhost:3000/product/id/
-      const url = URL_ROOT + '/product/id/' + product.id;
-      superagent.get(url, (error, res) => {
-        // Check for error
-        assert.ifError();
+        superagent.get(url, function(error, res) {
+          assert.ifError(error);
 
-        // Check for parsing exception
-        var result;
-        assert.doesNotThrow(() => {
-          result = JSON.parse(res.text);
+          assert.equal(res.status, 200);
+          var result;
+          assert.doesNotThrow(function() {
+            result = JSON.parse(res.text).user;
+          });
+          assert.equal(result.data.cart.length, 1);
+          assert.equal(result.data.cart[0].product.name, 'Asus Zenbook Prime');
+          assert.equal(result.data.cart[0].quantity, 1);
+          done();
         });
-
-        // Check result contains an object named product
-        assert.ok(result.product);
-
-        // Check the return _id comply with the product _id
-        assert.equal(result.product._id, product._id);
-
-        done();
       });
     });
   });
-
 });
