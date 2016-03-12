@@ -1,33 +1,42 @@
-const mongoose = require('mongoose');
-const fx = require('./fx');
+var mongoose = require('mongoose');
+var Category = require('./category');
+var fx = require('./fx');
 
-const productSchema = {
+var productSchema = {
   name: { type: String, required: true },
-
-  // Pictures must start with http://
+  // Pictures must start with "http://"
   pictures: [{ type: String, match: /^http:\/\//i }],
   price: {
-    amount: { type: Number, required: true },
-    set: (value) => {
-      this.internal.approximatePriceUSD =
-        value / (fx()[this.price.currency] || 1);
-      return value;
-    }
-    // Only 3 currencies for now
-    currency: { type: String, enum: ['USD', 'EUR', 'GBP'], required: true },
-    set: (value) => {
-      this.internal.approximatePriceUSD =
-        this.price.amount / (fx()[value] || 1);
-      return value;
+    amount: {
+      type: Number,
+      required: true,
+      set: function(v) {
+        this.internal.approximatePriceUSD =
+          v / (fx()[this.price.currency] || 1);
+        return v;
+      }
+    },
+    // Only 3 supported currencies for now
+    currency: {
+      type: String,
+      enum: ['USD', 'EUR', 'GBP'],
+      required: true,
+      set: function(v) {
+        this.internal.approximatePriceUSD =
+          this.price.amount / (fx()[v] || 1);
+        return v;
+      }
     }
   },
-  category: require('./category').categorySchema,
+  category: Category.categorySchema,
   internal: {
     approximatePriceUSD: Number
   }
 };
 
-const currencySymbols = {
+var schema = new mongoose.Schema(productSchema);
+
+var currencySymbols = {
   'USD': '$',
   'EUR': '€',
   'GBP': '£'
@@ -41,10 +50,9 @@ schema.virtual('displayPrice').get(function() {
   return currencySymbols[this.price.currency] +
     '' + this.price.amount;
 });
-// For Mongoose to convert js <-> json
 
 schema.set('toObject', { virtuals: true });
 schema.set('toJSON', { virtuals: true });
 
-module.exports = new mongoose.Schema(productSchema);
+module.exports = schema;
 module.exports.productSchema = productSchema;
