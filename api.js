@@ -36,7 +36,7 @@ module.exports = (wagner) => {
 
   // Get children categories by parent
   api.get('/category/parent/:id', wagner.invoke((Category) =>
-    (res, req) => {
+    (req, res) => {
       Category
       .find({ parent: req.params.id })
       .sort({ _id: 1 })

@@ -15,4 +15,7 @@ module.exports = (wagner) => {
   // User model creation and service registration
   const User = mongoose.model('User', require('./user'), 'users');
   wagner.factory('User', () => User);
+
+  // return models
+  return { Category, Product, User };
 };

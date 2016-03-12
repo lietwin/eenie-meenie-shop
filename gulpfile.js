@@ -7,17 +7,16 @@ const browserSync = require('browser-sync').create();
 const paths =  {
   scripts: './*.js',
   sandbox: './sandbox/**/*.js',
-  test: './test/**/*.js'
+  tests: './test/**/*.js'
 };
 
 const BROWSER_SYNC_RELOAD_DELAY = 500;
 
 // test task
-gulp.task('test', () => {
-  gulp.src('./test/test.js')
+gulp.task('test', function () {
+  gulp.src(paths.tests)
     .pipe(mocha())
-    .on('error', (error) => {
-      //console.log(error);
+    .on('error', function (error) {
       this.emit('end');
     });
 });
